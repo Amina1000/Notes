@@ -10,5 +10,5 @@
         android:id="@+id/add_image"
         android:icon="@android:drawable/ic_menu_help"
         app:showAsAction="ifRoom"
-        android:title="@string/item_attach1"/>
+        android:title="@string/item_attach"/>
 </menu>

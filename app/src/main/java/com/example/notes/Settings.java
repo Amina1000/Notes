@@ -1,7 +1,5 @@
 package com.example.notes;
 
-import androidx.annotation.NonNull;
-
 /**
  * homework com.example.notes
  *
