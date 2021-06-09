@@ -5,4 +5,17 @@
     <string name="desc">Описание</string>
     <string name="name_note">Название</string>
     <string name="save_button">Сохранить</string>
+    <string name="change_font_size">Изменить шрифт</string>
+    <string name="font_size_hint">Размер шрифта</string>
+    <string name="button_ok">OK</string>
+    <string name="btn_add">+</string>
+    <string name="item_add">Создать</string>
+    <string name="item_delete">Удалить</string>
+    <string name="item_Settings">Настроики</string>
+    <string name="item_search">Поиск</string>
+    <string name="item_main">Главная</string>
+    <string name="item_sort">Сортировка</string>
+    <string name="item_send">Поделиться</string>
+    <string name="item_attach1">Добавить картинку</string>
+
 </resources>
