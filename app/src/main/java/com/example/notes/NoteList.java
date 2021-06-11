@@ -36,6 +36,7 @@ public class NoteList extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         recyclerView = view.findViewById(R.id.recycler_view_notes);
         context = getContext();
+        noteLinkedList.clear();
         initPopupMenu(view);
         initRecyclerView();
     }
