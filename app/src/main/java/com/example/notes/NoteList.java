@@ -80,7 +80,11 @@ public class NoteList extends Fragment {
         // Установим адаптер
         NoteAdapter adapter = new NoteAdapter(noteLinkedList);
         recyclerView.setAdapter(adapter);
-
+        // Установим слушателя
+        adapter.SetOnItemClickListener((view, position) -> {
+            view.setBackgroundResource(R.color.teal_700);
+            ((NoteScreen) requireActivity()).openNoteScreen(noteLinkedList.get(position));
+        });
 
     }
 
