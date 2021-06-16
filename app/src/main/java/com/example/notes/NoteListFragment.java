@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
@@ -16,12 +15,17 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
-public class NoteList extends Fragment {
+public class NoteListFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private Context context;
+    private NoteSourceImp data;
+    private final List<Note> noteLinkedList = new LinkedList<>();
+    private NoteAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -30,14 +34,34 @@ public class NoteList extends Fragment {
         return inflater.inflate(R.layout.fragment_note_list, container, false);
     }
 
-
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        initView(view);
+        initPopupMenu(view);
+    }
+
+    private void initView(View view) {
         recyclerView = view.findViewById(R.id.recycler_view_notes);
         context = getContext();
-        initPopupMenu(view);
-        NoteCardsSource data = new NoteCardsSource(getResources()).init();
-        initRecyclerView(data);
+        initList();
+        data = new NoteSourceImp(getResources(), noteLinkedList);
+        adapter = new NoteAdapter(data);
+        initRecyclerView();
+    }
+
+    private void initList() {
+        if (noteLinkedList.size() == 0) {
+            // строки заголовков из ресурсов
+            String[] titles = getResources().getStringArray(R.array.notes);
+            // строки описаний из ресурсов
+            String[] descriptions = getResources().getStringArray(R.array.descriptions);
+            // изображения
+
+            // заполнение источника данных
+            for (int i = 0; i < descriptions.length; i++) {
+                noteLinkedList.add(new Note(titles[i], descriptions[i]));
+            }
+        }
     }
 
     private void initPopupMenu(View view) {
@@ -48,10 +72,13 @@ public class NoteList extends Fragment {
             popup.show();
             popup.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.action_add) {
-                    Toast.makeText(context, "Создали заметку", Toast.LENGTH_SHORT).show();
+                    Note newNote = new Note("", "");
+                    addUpdateNote(newNote, data.size());
                     return true;
                 } else if (item.getItemId() == R.id.action_clear) {
-                    Toast.makeText(context, "Удалили заметку", Toast.LENGTH_SHORT).show();
+                    data.clearNoteData();
+                    //Обновляет данные списка.
+                    adapter.notifyDataSetChanged();
                     return true;
                 }
                 return true;
@@ -59,16 +86,19 @@ public class NoteList extends Fragment {
         });
     }
 
+    public interface Controller {
+        void openNoteScreen(Note note, int position);
+    }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (!(context instanceof NoteScreen)) {
+        if (!(context instanceof Controller)) {
             throw new RuntimeException("Activity must implement NoteScreen");
         }
     }
 
-    private void initRecyclerView(NoteCardsSource data) {
-
+    private void initRecyclerView() {
 
         recyclerView.setHasFixedSize(true);
 
@@ -77,18 +107,31 @@ public class NoteList extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         // Установим адаптер
-        NoteAdapter adapter = new NoteAdapter(data);
         recyclerView.setAdapter(adapter);
         // Добавим разделитель карточек
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(requireContext(),  LinearLayoutManager.VERTICAL);
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL);
         itemDecoration.setDrawable(Objects.requireNonNull(ResourcesCompat.getDrawable(getResources(), R.drawable.separator, null)));
         recyclerView.addItemDecoration(itemDecoration);
         // Установим слушателя
-        adapter.SetOnItemClickListener((view, position) -> {
+        adapter.SetOnItemClickListener((view, position, itemId) -> {
             view.setBackgroundResource(R.color.teal_700);
-            ((NoteScreen) requireActivity()).openNoteScreen(data.getNoteData(position));
+            if (itemId == adapter.CMD_UPDATE) {
+                ((Controller) requireActivity()).openNoteScreen(data.getNoteData(position), position);
+            } else if (itemId == adapter.CMD_DELETE) {
+                data.deleteNoteData(position);
+                adapter.notifyDataSetChanged();
+            }
         });
+    }
 
+    public void addUpdateNote(Note newNote, int position) {
+
+        if (data.size() != position) {
+            data.updateNoteData(position, newNote);
+        } else data.addNoteData(newNote);
+        adapter.notifyItemInserted(position);
+        //позицианируется на новой позиции
+        recyclerView.scrollToPosition(position);
     }
 
 }

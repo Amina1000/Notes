@@ -1,13 +1,17 @@
 package com.example.notes;
 
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.Calendar;
 
 
 /**
@@ -17,17 +21,20 @@ import androidx.recyclerview.widget.RecyclerView;
  * 11.06.2021
  */
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
-    private final NoteCardsSource dataSource;
+    private final NoteSourceImp dataSource;
     private OnItemClickListener itemClickListener;  // Слушатель будет устанавливаться извне
+    public int CMD_UPDATE = 0;
+    public int CMD_DELETE = 1;
 
     // Передаём в конструктор источник данных
     // В нашем случае это массив, но может быть и запрос к БД
-    public NoteAdapter(NoteCardsSource dataSource) {
+    public NoteAdapter(NoteSourceImp dataSource) {
         this.dataSource = dataSource;
     }
 
     // Создать новый элемент пользовательского интерфейса
     // Запускается менеджером
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @NonNull
     @Override
     public NoteAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -56,12 +63,14 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
     // Интерфейс для обработки нажатий, как в ListView
     public interface OnItemClickListener {
-        void onItemClick(View view , int position);
+        void onItemClick(View view, int position, int itemId);
     }
+
     // Сеттер слушателя нажатий
-    public void SetOnItemClickListener(OnItemClickListener itemClickListener){
+    public void SetOnItemClickListener(OnItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
     }
+
     // Этот класс хранит связь между данными и элементами View
     // Сложные данные могут потребовать несколько View на один пункт списка
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -69,6 +78,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         private final TextView title;
         private final TextView description;
 
+        @RequiresApi(api = Build.VERSION_CODES.N)
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.title);
@@ -77,14 +87,34 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
             // Обработчик нажатий на этом ViewHolder
             image.setOnClickListener(v -> {
-                if (itemClickListener != null) {
-                    itemClickListener.onItemClick(v, getAdapterPosition());
-                }
+                image.showContextMenu(getAdapterPosition(), getAdapterPosition());
+            });
+
+            image.setOnCreateContextMenuListener((menu, v, menuInfo) -> {
+
+                menu.setHeaderTitle(R.string.item_title);
+                menu.add(0, CMD_UPDATE, 0, R.string.item_update).
+                        setOnMenuItemClickListener(item -> {
+                            if (itemClickListener != null) {
+                               itemClickListener.onItemClick(v, getAdapterPosition(), CMD_UPDATE);
+                            }
+                            return true;
+                        });
+
+                menu.add(0, CMD_DELETE, 0, R.string.item_delete).
+                        setOnMenuItemClickListener(item -> {
+                            if (itemClickListener != null) {
+                                itemClickListener.onItemClick(v, getAdapterPosition(), CMD_DELETE);
+                            }
+                            return true;
+                        });
+
             });
         }
-        public void setData(Note note){
+
+        public void setData(Note note) {
             title.setText(note.getName());
-            description.setText(note.getDate().toString());
+            description.setText(note.getDescription());
         }
     }
 }

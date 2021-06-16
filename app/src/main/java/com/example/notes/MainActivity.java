@@ -19,9 +19,10 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.navigation.NavigationView;
 
-public class MainActivity extends AppCompatActivity implements NoteFragment.Controller, NoteScreen {
+public class MainActivity extends AppCompatActivity implements NoteFragment.Controller, NoteListFragment.Controller {
 
     private boolean isLandscape;
+    private static final String NOTES_LIST_FRAGMENT_TAG = "NOTES_LIST_FRAGMENT_TAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
                 Configuration.ORIENTATION_LANDSCAPE;
         initView();
         readSettings();
-        addFragment(R.id.main_container, new NoteList(), true);
+        addFragment(R.id.main_container, new NoteListFragment(), NOTES_LIST_FRAGMENT_TAG);
     }
 
     private void initView() {
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.action_about) {
-                addFragment(R.id.main_container, new AboutAppFragment(), true);
+                addFragment(R.id.main_container, new AboutAppFragment(), "");
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
             }
@@ -70,27 +71,29 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
     }
 
 
-    private void addFragment(int idView, Fragment fragment, boolean replace) {
-
+    private void addFragment(int idView, Fragment fragment, String key) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         // Добавить фрагмент
-        if (replace) {
-            fragmentTransaction.replace(idView, fragment);
+        if (!key.equals("")) {
+            fragmentTransaction.add(idView, fragment, key);
         } else {
-            fragmentTransaction.add(idView, fragment);
+            fragmentTransaction.replace(idView, fragment);
         }
         fragmentTransaction.addToBackStack(null).commit();
     }
 
     @Override
-    public void openNoteScreen(Note note) {
+    public void openNoteScreen(Note note, int position) {
         int idView = isLandscape ? R.id.detail_container : R.id.main_container;
-        addFragment(idView, NoteFragment.newInstance(note), true);
+        addFragment(idView, NoteFragment.newInstance(note, position), "");
     }
 
     @Override
-    public void saveResult(Note note) {
-        //to do
+    public void saveResult(Note note, int position) {
+        getSupportFragmentManager().popBackStack();
+        NoteListFragment noteListFragment = (NoteListFragment) getSupportFragmentManager().findFragmentByTag(NOTES_LIST_FRAGMENT_TAG);
+        assert noteListFragment != null;
+        noteListFragment.addUpdateNote(note, position);
     }
 
     // Чтение настроек
@@ -114,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
                 Toast.makeText(MainActivity.this, query, Toast.LENGTH_SHORT).show();
                 return true;
             }
+
             // реагирует на нажатие каждой клавиши
             @Override
             public boolean onQueryTextChange(String newText) {
@@ -129,10 +133,11 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
         // Обработка выбора пункта меню приложения (активити)
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            addFragment(R.id.main_container, new SettingsFragment(), true);
+            addFragment(R.id.main_container, new SettingsFragment(), "");
             return true;
         } else if (id == R.id.action_main) {
-            addFragment(R.id.main_container, new NoteList(), true);
+            NoteListFragment noteListFragment = (NoteListFragment) getSupportFragmentManager().findFragmentByTag(NOTES_LIST_FRAGMENT_TAG);
+            addFragment(R.id.main_container, noteListFragment, "");
             return true;
         } else if (id == R.id.action_sort) {
             Toast.makeText(this, "Сортировка пока не работает", Toast.LENGTH_SHORT).show();
