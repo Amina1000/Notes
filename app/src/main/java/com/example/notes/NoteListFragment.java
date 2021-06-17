@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +27,7 @@ public class NoteListFragment extends Fragment {
     private NoteSourceImp data;
     private NoteAdapter adapter;
     private List<Object> objectListItem = new ArrayList<>();
+    private static final int MY_DEFAULT_DURATION = 1000;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -114,10 +116,16 @@ public class NoteListFragment extends Fragment {
         DividerItemDecoration itemDecoration = new DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL);
         itemDecoration.setDrawable(Objects.requireNonNull(ResourcesCompat.getDrawable(getResources(), R.drawable.separator, null)));
         recyclerView.addItemDecoration(itemDecoration);
+        // Установим анимацию. А чтобы было хорошо заметно, сделаем анимацию долгой
+        DefaultItemAnimator animator = new DefaultItemAnimator();
+        animator.setAddDuration(MY_DEFAULT_DURATION);
+        animator.setRemoveDuration(MY_DEFAULT_DURATION);
+        recyclerView.setItemAnimator(animator);
         // Установим слушателя
         adapter.SetOnItemClickListener((view, position, itemId) -> {
             view.setBackgroundResource(R.color.teal_700);
             if (itemId == adapter.CMD_UPDATE) {
+
                 ((Controller) requireActivity()).openNoteScreen(data.getNoteData(position), position);
             } else if (itemId == adapter.CMD_DELETE) {
                 data.deleteNoteData(position);
