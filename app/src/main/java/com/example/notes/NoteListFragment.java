@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,8 +24,8 @@ public class NoteListFragment extends Fragment {
     private RecyclerView recyclerView;
     private Context context;
     private NoteSourceImp data;
-    private final List<Note> noteLinkedList = new LinkedList<>();
     private NoteAdapter adapter;
+    private List<Object> objectListItem = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,22 +44,24 @@ public class NoteListFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view_notes);
         context = getContext();
         initList();
-        data = new NoteSourceImp(getResources(), noteLinkedList);
+        data = new NoteSourceImp(objectListItem);
         adapter = new NoteAdapter(data);
         initRecyclerView();
     }
 
     private void initList() {
-        if (noteLinkedList.size() == 0) {
+        if (objectListItem.isEmpty()){
+            objectListItem = new ArrayList<>();
             // строки заголовков из ресурсов
             String[] titles = getResources().getStringArray(R.array.notes);
             // строки описаний из ресурсов
             String[] descriptions = getResources().getStringArray(R.array.descriptions);
             // изображения
-
             // заполнение источника данных
             for (int i = 0; i < descriptions.length; i++) {
-                noteLinkedList.add(new Note(titles[i], descriptions[i]));
+                Note note = new Note(titles[i], descriptions[i]);
+                objectListItem.add(note.getDate());
+                objectListItem.add(note);
             }
         }
     }

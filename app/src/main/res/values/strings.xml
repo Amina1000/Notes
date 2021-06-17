@@ -24,4 +24,5 @@
     <string name="navigation_drawer_open">Открыть навигацию</string>
     <string name="navigation_drawer_close">Закрыть навигацию</string>
     <string name="about_app">Это приложение вам поможет организовать ваш день</string>
+    <string name="group_title">Группа</string>
 </resources>

@@ -1,7 +1,7 @@
 package com.example.notes;
 
-import android.content.res.Resources;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -10,42 +10,50 @@ import java.util.List;
  * @author Amina
  * 12.06.2021
  */
-public class NoteSourceImp implements NoteSource {
-    private final List<Note> noteLinkedList;
-    private final Resources resources;
+public class NoteSourceImp implements NoteSource{
 
-    public NoteSourceImp(Resources resources, List<Note> noteLinkedList) {
-        this.noteLinkedList = noteLinkedList;
-        this.resources = resources;
+
+    private final List <Object> objectListItem;
+
+
+    public NoteSourceImp(List <Object> objectListItem) {
+        this.objectListItem = objectListItem;
     }
 
 
+    public boolean isGroupItem(int position) {
+        return !(objectListItem.get(position) instanceof Note);
+    }
 
+    public String getGroupTitle(int position) {
+        Date date = (Date) objectListItem.get(position);
+        return new SimpleDateFormat("yyyy-MM-dd").format(date);
+    }
     public Note getNoteData(int position) {
-          return noteLinkedList.get(position);
+          return (Note) objectListItem.get(position);
     }
 
     public int size(){
-        return noteLinkedList.size();
+        return objectListItem.size();
     }
 
     @Override
     public void deleteNoteData(int position) {
-        noteLinkedList.remove(position);
+        objectListItem.remove(position);
     }
 
     @Override
     public void updateNoteData(int position, Note noteData) {
-        noteLinkedList.set(position, noteData);
+        objectListItem.set(position, noteData);
     }
 
     @Override
     public void addNoteData(Note noteData) {
-        noteLinkedList.add(noteData);
+        objectListItem.add(noteData);
     }
 
     @Override
     public void clearNoteData() {
-        noteLinkedList.clear();
+        objectListItem.clear();
     }
 }
