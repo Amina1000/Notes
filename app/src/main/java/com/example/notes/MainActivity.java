@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
         });
     }
 
-
     private Toolbar initToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -73,9 +72,6 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
         getSupportActionBar().setHomeButtonEnabled(true);
         return toolbar;
     }
-
-
-
 
     @Override
     public void openNoteScreen(Note note, int position) {
@@ -140,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
         }
         return super.onOptionsItemSelected(item);
     }
+
     public Navigation getNavigation() {
         return navigation;
     }
