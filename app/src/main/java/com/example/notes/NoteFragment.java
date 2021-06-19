@@ -16,6 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import java.util.Calendar;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link NoteFragment#newInstance} factory method to
@@ -32,7 +34,7 @@ public class NoteFragment extends Fragment {
     private Note note = null;
     private EditText eName;
     private EditText eDescription;
-    private TextView tvDate;
+    private EditText eDate;
     private TextView tvAuthor;
     private int position;
 
@@ -66,7 +68,7 @@ public class NoteFragment extends Fragment {
         setHasOptionsMenu(true);
         eName = view.findViewById(R.id.name_edit_text);
         eDescription = view.findViewById(R.id.descriptions_edit_text);
-        tvDate = view.findViewById(R.id.date);
+        eDate = view.findViewById(R.id.date);
         tvAuthor = view.findViewById(R.id.author);
         Button saveChanges = view.findViewById(R.id.save_changes);
 
@@ -74,7 +76,7 @@ public class NoteFragment extends Fragment {
             Controller controller = (Controller) getActivity();
             assert controller != null;
             Note newNote = new Note(eName.getText().toString(),
-                    eDescription.getText().toString());
+                    eDescription.getText().toString(), Calendar.getInstance().getTime());
             controller.saveResult(newNote, position);
         });
     }
@@ -97,7 +99,7 @@ public class NoteFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         eName.setText(note.getName());
         eDescription.setText(note.getDescription());
-        tvDate.setText(note.getDate().toString());
+        eDate.setText(note.getDate().toString());
         tvAuthor.setText(note.getAuthor());
 
     }

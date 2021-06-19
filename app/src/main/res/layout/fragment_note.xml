@@ -24,9 +24,12 @@
         android:hint="@string/desc"
         android:lines="8"
         android:scrollbars="vertical" />
-    <TextView
+    <EditText
         android:id="@+id/date"
-        style="@style/style" />
+        style="@style/style"
+        android:autofillHints="username"
+        android:hint="@string/date"
+        android:inputType="date"/>
     <TextView
         android:id="@+id/author"
         style="@style/style" />

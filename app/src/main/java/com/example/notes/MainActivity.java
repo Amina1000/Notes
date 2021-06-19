@@ -14,15 +14,16 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.navigation.NavigationView;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements NoteFragment.Controller, NoteListFragment.Controller {
 
     private boolean isLandscape;
     private static final String NOTES_LIST_FRAGMENT_TAG = "NOTES_LIST_FRAGMENT_TAG";
+    private Navigation navigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +33,8 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
                 Configuration.ORIENTATION_LANDSCAPE;
         initView();
         readSettings();
-        addFragment(R.id.main_container, new NoteListFragment(), NOTES_LIST_FRAGMENT_TAG);
+        navigation = new Navigation(getSupportFragmentManager());
+        getNavigation().addFragment(R.id.main_container, new NoteListFragment(), NOTES_LIST_FRAGMENT_TAG);
     }
 
     private void initView() {
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.action_about) {
-                addFragment(R.id.main_container, new AboutAppFragment(), "");
+                getNavigation().addFragment(R.id.main_container, new AboutAppFragment(), "");
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
             }
@@ -67,25 +69,18 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
     private Toolbar initToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         return toolbar;
     }
 
 
-    private void addFragment(int idView, Fragment fragment, String key) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        // Добавить фрагмент
-        if (!key.equals("")) {
-            fragmentTransaction.add(idView, fragment, key);
-        } else {
-            fragmentTransaction.replace(idView, fragment);
-        }
-        fragmentTransaction.addToBackStack(null).commit();
-    }
+
 
     @Override
     public void openNoteScreen(Note note, int position) {
         int idView = isLandscape ? R.id.detail_container : R.id.main_container;
-        addFragment(idView, NoteFragment.newInstance(note, position), "");
+        getNavigation().addFragment(idView, NoteFragment.newInstance(note, position), "");
     }
 
     @Override
@@ -101,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
         // Специальный класс для хранения настроек
         SharedPreferences sharedPref = getSharedPreferences(Settings.SHARED_PREFERENCE_NAME, MODE_PRIVATE);
         // Считываем значения настроек
-        Settings.fontSize = sharedPref.getInt(Settings.FONT_SIZE, 20);
+        Settings.fontSize = sharedPref.getInt(Settings.FONT_SIZE_KEY, 20);
     }
 
     @Override
@@ -133,16 +128,19 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
         // Обработка выбора пункта меню приложения (активити)
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            addFragment(R.id.main_container, new SettingsFragment(), "");
+            getNavigation().addFragment(R.id.main_container, new SettingsFragment(), "");
             return true;
         } else if (id == R.id.action_main) {
             NoteListFragment noteListFragment = (NoteListFragment) getSupportFragmentManager().findFragmentByTag(NOTES_LIST_FRAGMENT_TAG);
-            addFragment(R.id.main_container, noteListFragment, "");
+            getNavigation().addFragment(R.id.main_container, noteListFragment, "");
             return true;
         } else if (id == R.id.action_sort) {
             Toast.makeText(this, "Сортировка пока не работает", Toast.LENGTH_SHORT).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    public Navigation getNavigation() {
+        return navigation;
     }
 }

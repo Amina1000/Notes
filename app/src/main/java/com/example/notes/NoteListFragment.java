@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,7 +62,7 @@ public class NoteListFragment extends Fragment {
             // изображения
             // заполнение источника данных
             for (int i = 0; i < descriptions.length; i++) {
-                Note note = new Note(titles[i], descriptions[i]);
+                Note note = new Note(titles[i], descriptions[i], Calendar.getInstance().getTime());
                 objectListItem.add(note.getDate());
                 objectListItem.add(note);
             }
@@ -76,7 +77,7 @@ public class NoteListFragment extends Fragment {
             popup.show();
             popup.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.action_add) {
-                    Note newNote = new Note("", "");
+                    Note newNote = new Note("", "",Calendar.getInstance().getTime());
                     addUpdateNote(newNote, data.size());
                     return true;
                 } else if (item.getItemId() == R.id.action_clear) {

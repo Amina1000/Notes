@@ -15,13 +15,13 @@ public class Note implements Parcelable {
 
     private final String name;
     private final String description;
-    private Date date;
+    private final Date date;
     private final String author;
 
-    public Note(String name, String description) {
+    public Note(String name, String description, Date date) {
         this.name = name;
         this.description = description;
-        this.date = new Date();
+        this.date = date;
         this.author = System.getProperty("user.name");
     }
 
@@ -29,6 +29,7 @@ public class Note implements Parcelable {
         name = in.readString();
         description = in.readString();
         author = in.readString();
+        date = new Date(in.readLong());
     }
 
     @Override
@@ -36,6 +37,7 @@ public class Note implements Parcelable {
         dest.writeString(name);
         dest.writeString(description);
         dest.writeString(author);
+        dest.writeLong(date.getTime());
     }
 
     @Override
