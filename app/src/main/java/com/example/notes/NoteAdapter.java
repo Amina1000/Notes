@@ -25,11 +25,14 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.BaseViewHolder
     public final int CMD_DELETE = 1;
     private static final int NOTE_VIEW_TYPE = 1;
     private static final int GROUP_VIEW_TYPE = 0;
+    private final boolean isLandscape;
+
 
     // Передаём в конструктор источник данных
     // В нашем случае это массив, но может быть и запрос к БД
-    public NoteAdapter(NoteSourceImp dataSource) {
+    public NoteAdapter(NoteSourceImp dataSource, boolean isLandscape) {
         this.dataSource = dataSource;
+        this.isLandscape = isLandscape;
     }
 
     // Создать новый элемент пользовательского интерфейса
@@ -68,7 +71,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.BaseViewHolder
 
     @Override
     public int getItemViewType(int position) {
-        return dataSource.isGroupItem(position)?GROUP_VIEW_TYPE:NOTE_VIEW_TYPE;
+        return dataSource.isGroupItem(position) ? GROUP_VIEW_TYPE : NOTE_VIEW_TYPE;
     }
 
     // Вернуть размер данных, вызывается менеджером
@@ -102,8 +105,13 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.BaseViewHolder
             AppCompatImageView image = itemView.findViewById(R.id.imageView);
 
             // Обработчик нажатий на этом ViewHolder
-            image.setOnClickListener(v -> image.
-                    showContextMenu(getAdapterPosition(), getAdapterPosition()));
+            image.setOnClickListener(v -> {
+                if (isLandscape && itemClickListener != null) {
+                    itemClickListener.onItemClick(v, getAdapterPosition(), CMD_UPDATE);
+                } else {
+                    image.showContextMenu(getAdapterPosition(), getAdapterPosition());
+                }
+            });
 
             image.setOnCreateContextMenuListener((menu, v, menuInfo) -> {
 
@@ -126,6 +134,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.BaseViewHolder
 
             });
         }
+
         public void setData(NoteSourceImp noteSourceImp, int position) {
             Note note = noteSourceImp.getNoteData(position);
             title.setText(note.getName());
@@ -133,7 +142,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.BaseViewHolder
         }
     }
 
-    public class GroupViewHolder extends BaseViewHolder {
+    public static class GroupViewHolder extends BaseViewHolder {
 
         private final TextView title;
 

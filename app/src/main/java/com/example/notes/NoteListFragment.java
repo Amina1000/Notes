@@ -1,6 +1,7 @@
 package com.example.notes;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,7 +49,9 @@ public class NoteListFragment extends Fragment {
         context = getContext();
         initList();
         data = new NoteSourceImp(objectListItem);
-        adapter = new NoteAdapter(data);
+        adapter = new NoteAdapter(data,
+                getResources().getConfiguration().orientation ==
+                Configuration.ORIENTATION_LANDSCAPE);
         initRecyclerView();
     }
 
