@@ -1,5 +1,6 @@
 package com.example.notes;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -34,7 +35,8 @@ public class NoteFragment extends Fragment {
     private Note note = null;
     private EditText eName;
     private EditText eDescription;
-    private EditText eDate;
+    private TextView tvDate;
+    Calendar calendar;
     private TextView tvAuthor;
     private int position;
 
@@ -68,17 +70,21 @@ public class NoteFragment extends Fragment {
         setHasOptionsMenu(true);
         eName = view.findViewById(R.id.name_edit_text);
         eDescription = view.findViewById(R.id.descriptions_edit_text);
-        eDate = view.findViewById(R.id.date);
+        tvDate = view.findViewById(R.id.date);
         tvAuthor = view.findViewById(R.id.author);
+        calendar=Calendar.getInstance();
         Button saveChanges = view.findViewById(R.id.save_changes);
 
         saveChanges.setOnClickListener(v -> {
             Controller controller = (Controller) getActivity();
             assert controller != null;
             Note newNote = new Note(eName.getText().toString(),
-                    eDescription.getText().toString(), Calendar.getInstance().getTime());
+                    eDescription.getText().toString(), calendar.getTime());
             controller.saveResult(newNote, position);
         });
+
+        tvDate.setOnClickListener(this::onClickDate);
+        // установка обработчика выбора даты
     }
 
     @Override
@@ -99,9 +105,23 @@ public class NoteFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         eName.setText(note.getName());
         eDescription.setText(note.getDescription());
-        eDate.setText(note.getDate().toString());
+        tvDate.setText(note.getDate().toString());
         tvAuthor.setText(note.getAuthor());
 
+    }
+
+    private void onClickDate(View v) {
+        new DatePickerDialog(getContext(),
+                (view, year, monthOfYear, dayOfMonth) -> {
+                    calendar.set(Calendar.YEAR, year);
+                    calendar.set(Calendar.MONTH, monthOfYear);
+                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    tvDate.setText(calendar.getTime().toString());
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH))
+                .show();
     }
 
     public interface Controller {

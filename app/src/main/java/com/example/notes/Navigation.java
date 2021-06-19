@@ -21,10 +21,10 @@ public class Navigation {
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         // Добавить фрагмент
-        if (!key.equals("")) {
-            fragmentTransaction.replace(idView, fragment, key);
-        } else {
+        if (key.equals("")) {
             fragmentTransaction.replace(idView, fragment);
+        } else {
+            fragmentTransaction.replace(idView, fragment, key);
         }
         fragmentTransaction.addToBackStack(null).commit();
     }
