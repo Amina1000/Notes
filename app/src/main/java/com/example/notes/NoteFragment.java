@@ -2,16 +2,19 @@ package com.example.notes;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,20 +56,26 @@ public class NoteFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_note, container, false);
-        eName        = view.findViewById(R.id.name_edit_text);
+        initView(view);
+        return view;
+    }
+
+    private void initView(View view) {
+        setHasOptionsMenu(true);
+        eName = view.findViewById(R.id.name_edit_text);
         eDescription = view.findViewById(R.id.descriptions_edit_text);
-        tDate        = view.findViewById(R.id.date);
-        tAuthor      = view.findViewById(R.id.author);
+        tDate = view.findViewById(R.id.date);
+        tAuthor = view.findViewById(R.id.author);
         Button saveChanges = view.findViewById(R.id.save_changes);
 
-        saveChanges.setOnClickListener(v->{
+        saveChanges.setOnClickListener(v -> {
             Controller controller = (Controller) getActivity();
             assert controller != null;
             controller.saveResult(new Note(eName.getText().toString(),
                     eDescription.getText().toString()));
         });
-        return view;
     }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -77,6 +86,7 @@ public class NoteFragment extends Fragment {
             note = getArguments().getParcelable(NOTE_ARG_PARAM);
         }
     }
+
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         eName.setText(note.getName());
@@ -85,8 +95,25 @@ public class NoteFragment extends Fragment {
         tAuthor.setText(note.getAuthor());
 
     }
+
     public interface Controller {
         void saveResult(Note note);
+    }
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.note_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_send){
+            Toast.makeText(getContext(), "Отправили заметку", Toast.LENGTH_SHORT).show();
+            return true;
+        }else if (item.getItemId() == R.id.add_image){
+            Toast.makeText(getContext(), "Добавили картинку", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }
