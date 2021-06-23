@@ -126,7 +126,7 @@ public class NoteListFragment extends Fragment {
         animator.setRemoveDuration(MY_DEFAULT_DURATION);
         recyclerView.setItemAnimator(animator);
         // Установим слушателя
-        adapter.SetOnItemClickListener((view, position, itemId) -> {
+        adapter.setOnItemClickListener((view, position, itemId) -> {
             view.setBackgroundResource(R.color.teal_700);
             if (itemId == adapter.CMD_UPDATE) {
 
