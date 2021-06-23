@@ -1,25 +1,26 @@
 package com.example.notes;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Objects;
 
 public class NoteList extends Fragment {
 
-    private LinearLayout linearLayout;
+    private RecyclerView recyclerView;
     private Context context;
 
     @Override
@@ -32,10 +33,11 @@ public class NoteList extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        linearLayout = view.findViewById(R.id.list_container);
+        recyclerView = view.findViewById(R.id.recycler_view_notes);
         context = getContext();
         initPopupMenu(view);
-        addNotesToList();
+        NoteCardsSource data = new NoteCardsSource(getResources()).init();
+        initRecyclerView(data);
     }
 
     private void initPopupMenu(View view) {
@@ -65,22 +67,28 @@ public class NoteList extends Fragment {
         }
     }
 
-    private void addNotesToList() {
+    private void initRecyclerView(NoteCardsSource data) {
 
-        String[] notesArray = getResources().getStringArray(R.array.notes);
-        for (int i = 0, notesArrayLength = notesArray.length; i < notesArrayLength; i++) {
-            String note = notesArray[i];
-            TextView notesView = new TextView(context);
-            notesView.setText(note);
-            notesView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.textSize));
-            notesView.setTypeface(null, Typeface.BOLD_ITALIC);
-            final int fi = i;
-            notesView.setOnClickListener(v -> {
-                v.setBackgroundResource(R.color.teal_700);
-                ((NoteScreen) requireActivity()).openNoteScreen(new Note(note,
-                        getResources().getStringArray(R.array.descriptions)[fi]));
-            });
-            linearLayout.addView(notesView);
-        }
+
+        recyclerView.setHasFixedSize(true);
+
+        // Будем работать со встроенным менеджером
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+        recyclerView.setLayoutManager(layoutManager);
+
+        // Установим адаптер
+        NoteAdapter adapter = new NoteAdapter(data);
+        recyclerView.setAdapter(adapter);
+        // Добавим разделитель карточек
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(requireContext(),  LinearLayoutManager.VERTICAL);
+        itemDecoration.setDrawable(Objects.requireNonNull(ResourcesCompat.getDrawable(getResources(), R.drawable.separator, null)));
+        recyclerView.addItemDecoration(itemDecoration);
+        // Установим слушателя
+        adapter.SetOnItemClickListener((view, position) -> {
+            view.setBackgroundResource(R.color.teal_700);
+            ((NoteScreen) requireActivity()).openNoteScreen(data.getNoteData(position));
+        });
+
     }
+
 }

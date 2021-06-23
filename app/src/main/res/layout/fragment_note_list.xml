@@ -6,12 +6,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".NoteList">
-    <LinearLayout
-        android:id="@+id/list_container"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_notes"
         android:layout_width="match_parent"
-        android:orientation="vertical"
         android:layout_height="0dp"
-        android:layout_weight="1"        />
+        android:layout_weight="1"
+        app:layoutManager="LinearLayoutManager"
+        tools:listitem="@layout/item"/>
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_popup_menu"
         android:layout_width="wrap_content"

@@ -4,4 +4,7 @@
     <dimen name="btn_radius">20dp</dimen>
     <dimen name="nav_header_height">200dp</dimen>
     <dimen name="nav_header_dimen">42sp</dimen>
+    <dimen name="textDescription">20sp</dimen>
+    <dimen name="textTitle">36sp</dimen>
+    <dimen name="heightImage">90dp</dimen>
 </resources>
