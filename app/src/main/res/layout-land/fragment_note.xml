@@ -22,9 +22,10 @@
         style="@style/style"
         android:gravity="top|start"
         android:hint="@string/desc"
-        android:lines="8"
+        android:lines="4"
         android:scrollbars="vertical" />
-     <TextView
+
+    <TextView
         android:id="@+id/date"
         style="@style/style" />
     <TextView

@@ -10,7 +10,10 @@
     <string name="button_ok">OK</string>
     <string name="btn_add">+</string>
     <string name="item_add">Создать</string>
+    <string name="item_clear">Очистить</string>
+    <string name="item_update">Изменить</string>
     <string name="item_delete">Удалить</string>
+    <string name="item_title">Действия</string>
     <string name="item_Settings">Настроики</string>
     <string name="item_search">Поиск</string>
     <string name="item_main">Главная</string>
@@ -21,4 +24,6 @@
     <string name="navigation_drawer_open">Открыть навигацию</string>
     <string name="navigation_drawer_close">Закрыть навигацию</string>
     <string name="about_app">Это приложение вам поможет организовать ваш день</string>
+    <string name="group_title">Группа</string>
+    <string name="date">Дата создания</string>
 </resources>

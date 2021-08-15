@@ -41,7 +41,6 @@ public class SettingsFragment extends Fragment {
             Settings.fontSize = Integer.parseInt(fontSize.getText().toString());
             writeSettings();
         });
-
     }
 
     private void writeSettings() {
@@ -49,8 +48,7 @@ public class SettingsFragment extends Fragment {
         SharedPreferences sharedPref = requireActivity().getSharedPreferences(Settings.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
         // Настройки сохраняются посредством специального класса editor
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt(Settings.FONT_SIZE, Settings.fontSize);
+        editor.putInt(Settings.FONT_SIZE_KEY, Settings.fontSize);
         editor.apply();
-
     }
 }
