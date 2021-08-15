@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * 11.06.2021
  */
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.BaseViewHolder> {
-    private final NoteSourceImp dataSource;
+    private final NoteSource dataSource;
     private OnItemClickListener itemClickListener;  // Слушатель будет устанавливаться извне
     public final int CMD_UPDATE = 0;
     public final int CMD_DELETE = 1;
@@ -30,7 +30,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.BaseViewHolder
 
     // Передаём в конструктор источник данных
     // В нашем случае это массив, но может быть и запрос к БД
-    public NoteAdapter(NoteSourceImp dataSource, boolean isLandscape) {
+    public NoteAdapter(NoteSource dataSource, boolean isLandscape) {
         this.dataSource = dataSource;
         this.isLandscape = isLandscape;
     }
@@ -86,7 +86,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.BaseViewHolder
     }
 
     // Сеттер слушателя нажатий
-    public void SetOnItemClickListener(OnItemClickListener itemClickListener) {
+    public void setOnItemClickListener(OnItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
     }
 
@@ -135,7 +135,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.BaseViewHolder
             });
         }
 
-        public void setData(NoteSourceImp noteSourceImp, int position) {
+        public void setData(NoteSource noteSourceImp, int position) {
             Note note = noteSourceImp.getNoteData(position);
             title.setText(note.getName());
             description.setText(note.getDescription());
@@ -151,7 +151,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.BaseViewHolder
             title = itemView.findViewById(R.id.group_title);
         }
 
-        public void setData(NoteSourceImp noteSourceImp, int position) {
+        public void setData(NoteSource noteSourceImp, int position) {
             title.setText(noteSourceImp.getGroupTitle(position));
         }
     }
@@ -161,7 +161,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.BaseViewHolder
             super(itemView);
         }
 
-        public void setData(NoteSourceImp noteSourceImp, int position) {
+        public void setData(NoteSource noteSourceImp, int position) {
         }
     }
 
